@@ -1,5 +1,5 @@
 # Development container image (without tag)
-DEVCTR_IMAGE_NO_TAG="public.mahesh/mahesh-maximus/mds"
+DEVCTR_IMAGE_NO_TAG="public.mahesh/mahesh-maximus/mdb"
 
 # Development container tag
 DEVCTR_IMAGE_TAG="v1"
@@ -22,10 +22,10 @@ AT_ROOT_DIR=$(cd "${AT_TOOLS_DIR}/.." && pwd)
 VC_DEVCTR_DIR="${AT_ROOT_DIR}/tools/devctr"
 
 # Full path to the Firecracker sources dir, as bind-mounted in the container.
-CTR_AT_ROOT_DIR="/MDS"
+CTR_AT_ROOT_DIR="/mdb"
 
 # Name of the devctr.
-AT_DEVCTR_NAME="MDS"
+AT_DEVCTR_NAME="mdb"
 
 # Send a decorated message to stdout, followed by a new line
 #

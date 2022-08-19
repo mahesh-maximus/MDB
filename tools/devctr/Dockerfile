@@ -40,7 +40,7 @@ RUN apt -y install fish
 # We need to install node and npm from source because of this issue with the
 # ubuntu repository:
 # https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
- RUN (curl -sL https://deb.nodesource.com/setup_17.x | bash) \
+ RUN (curl -sL https://deb.nodesource.com/setup_18.x | bash) \
      && apt-get install -y nodejs \
      && npm install --global yarn \
      && rm -rf /var/lib/apt/lists/*

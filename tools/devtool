@@ -1,5 +1,5 @@
 # Development container image (without tag)
-DEVCTR_IMAGE_NO_TAG="public.mahesh/mahesh-maximus/MDS"
+DEVCTR_IMAGE_NO_TAG="public.mahesh/mahesh-maximus/mds"
 
 # Development container tag
 DEVCTR_IMAGE_TAG="v1"

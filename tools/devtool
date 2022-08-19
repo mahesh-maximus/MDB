@@ -154,13 +154,6 @@ ensure_devctr() {
 
         ok_or_die "Error building docker image. Aborting."
     }
-
-    say "About to rebuild docker image $DEVCTR_IMAGE"
-    get_user_confirmation || die "Aborted."
-
-    retry_cmd cmd_build_devctr 5 3
-
-    ok_or_die "Error building docker image. Aborting."
 }
 
 # Prompt the user for confirmation before proceeding.

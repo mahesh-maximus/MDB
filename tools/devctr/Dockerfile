@@ -74,6 +74,8 @@ RUN cp /init.vim $HOME/.config/nvim/init.vim
 
 RUN nvim --headless +PlugInstall +qall
 
+RUN timeout 5 nvim  --headless  "+CocInstall coc-rust-analyzer"; exit 0
+
 COPY /tools/devctr/docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN chmod +x docker-entrypoint.sh

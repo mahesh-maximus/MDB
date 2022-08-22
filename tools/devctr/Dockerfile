@@ -72,9 +72,14 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
 COPY /tools/devctr/init.vim /init.vim
 RUN cp /init.vim $HOME/.config/nvim/init.vim
 
+COPY tools/devctr/.tmux.conf /.tmux.conf
+RUN cp /.tmux.conf ~/.tmux.conf
+
 RUN nvim --headless +PlugInstall +qall
 
 RUN timeout 5 nvim  --headless  "+CocInstall coc-rust-analyzer"; exit 0
+
+RUN chsh -s $(which fish)
 
 COPY /tools/devctr/docker-entrypoint.sh /docker-entrypoint.sh
 

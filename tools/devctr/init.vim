@@ -13,3 +13,6 @@ call plug#end()
 
 let g:coc_disable_startup_warning = 1
 
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ }

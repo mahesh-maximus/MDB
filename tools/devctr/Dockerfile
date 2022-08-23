@@ -75,6 +75,9 @@ RUN cp /init.vim $HOME/.config/nvim/init.vim
 COPY tools/devctr/.tmux.conf /.tmux.conf
 RUN cp /.tmux.conf ~/.tmux.conf
 
+COPY tools/devctr/config.fish /config.fish
+RUN cp /config.fish ~/.config/fish/config.fish
+
 RUN nvim --headless +PlugInstall +qall
 
 RUN timeout 5 nvim  --headless  "+CocInstall coc-rust-analyzer"; exit 0

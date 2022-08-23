@@ -76,7 +76,7 @@ COPY tools/devctr/.tmux.conf /.tmux.conf
 RUN cp /.tmux.conf ~/.tmux.conf
 
 COPY tools/devctr/config.fish /config.fish
-RUN cp /config.fish $HOME/.config/fish/config.fish
+RUN cp /config.fish ~/.config/fish/config.fish
 
 RUN nvim --headless +PlugInstall +qall
 

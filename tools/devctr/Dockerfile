@@ -69,14 +69,14 @@ RUN mkdir $HOME/.config/nvim
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-COPY /tools/devctr/init.vim /init.vim
+COPY tools/devctr/init.vim /init.vim
 RUN cp /init.vim $HOME/.config/nvim/init.vim
 
 COPY tools/devctr/.tmux.conf /.tmux.conf
 RUN cp /.tmux.conf ~/.tmux.conf
 
 COPY tools/devctr/config.fish /config.fish
-RUN cp /config.fish ~/.config/fish/config.fish
+RUN cp /config.fish $HOME/.config/fish/config.fish
 
 RUN nvim --headless +PlugInstall +qall
 

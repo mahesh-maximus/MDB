@@ -64,12 +64,12 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION_TAG}/tini-s
 RUN chmod +x /sbin/tini
 
 RUN mkdir $HOME/.config
-RUN mkdir $HOME/.config/nvim
 
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 COPY tools/devctr/init.vim /init.vim
+RUN mkdir $HOME/.config/nvim
 RUN cp /init.vim $HOME/.config/nvim/init.vim
 
 COPY tools/devctr/.tmux.conf /.tmux.conf

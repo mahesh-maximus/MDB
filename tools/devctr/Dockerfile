@@ -48,8 +48,7 @@ RUN apt -y install fish
 # Install the Rust toolchain
 
  RUN mkdir "$TMP_BUILD_DIR" \
-     && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN" \
-         && rustup target add x86_64-unknown-linux-musl \
+     && curl https://sh.rustup.rs -sSf | sh -s -- -y \
          && rustup install "stable" \
          && cd "$TMP_BUILD_DIR" \
          && rm -rf "$CARGO_HOME/registry" \

@@ -1,16 +1,35 @@
-#![allow(unused)]
+use std::{
+    fs,
+    io::{prelude::*, BufReader},
+    net::{TcpListener, TcpStream},
+};
+
 fn main() {
-format!("Hello");                 // => "Hello"
-format!("Hello, {}!", "world");   // => "Hello, world!"
-format!("The number is {}", 1);   // => "The number is 1"
-format!("{:?}", (3, 4));          // => "(3, 4)"
-format!("{value}", value=4);      // => "4"
-let people = "Rustaceans";
-format!("Hello {people}!");       // => "Hello Rustaceans!"
-format!("{} {}", 1, 2);           // => "1 2"
-format!("{:04}", 42);             // => "0042" with leading zeros
-format!("{:#?}", (100, 200));     // => "(
-                                  //       100,
-                                  //       200,
-                                  //     )"
+    let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
+
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        handle_connection(stream);
+    }
+}
+
+fn handle_connection(mut stream: TcpStream) {
+    let buf_reader = BufReader::new(&mut stream);
+    let request_line = buf_reader.lines().next().unwrap().unwrap();
+
+    if request_line == "GET / HTTP/1.1" {
+        let status_line = "HTTP/1.1 200 OK";
+        let contents = fs::read_to_string("/mdb/frontend/index.html").unwrap();
+        let length = contents.len();
+
+        let response = format!(
+            "{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}"
+        );
+
+        stream.write_all(response.as_bytes()).unwrap();
+    // --snip--
+    } else {
+
+    }
 }

@@ -38,6 +38,8 @@
         Box,
         SvgIcon,
         Link,
+	Button,
+	Stack
       } = MaterialUI;
 
       // Create a theme instance.
@@ -91,8 +93,17 @@
         return (
           <Container maxWidth="sm">
             <Box sx={{ my: 4 }}>
+	        <Stack direction="row" spacing={2}>
+      <Button color="secondary">Secondary</Button>
+      <Button variant="contained" color="success">
+        Success
+      </Button>
+      <Button variant="outlined" color="error">
+        Error
+      </Button>
+    </Stack>
               <Typography variant="h4" component="h1" gutterBottom>
-                CDN example
+		MAHESH WORLD
               </Typography>
               <ProTip />
               <Copyright />

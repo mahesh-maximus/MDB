@@ -5,6 +5,10 @@ use std::{
 };
 
 fn main() {
+
+    println!("Starting MDB ...");
+
+
     let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
 
     for stream in listener.incoming() {
@@ -30,6 +34,6 @@ fn handle_connection(mut stream: TcpStream) {
         stream.write_all(response.as_bytes()).unwrap();
     // --snip--
     } else {
-
+        println!("Not GET");
     }
 }

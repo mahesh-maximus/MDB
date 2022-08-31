@@ -26,8 +26,27 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   </head>
   <body>
+
+	<script>
+		alert("MAX 1");
+const socket = new WebSocket('ws://20.228.172.250:8000');
+
+// Connection opened
+socket.addEventListener('open', (event) => {
+    socket.send('Hello Server!');
+});
+
+// Listen for messages
+socket.addEventListener('message', (event) => {
+    console.log('Message from server ', event.data);
+});
+
+</script>
+
     <div id="root"></div>
     <script type="text/babel">
+alert("MAX 2");
+
       const {
         colors,
         CssBaseline,

@@ -247,6 +247,7 @@ run_devctr() {
         --name "$AT_DEVCTR_NAME" \
         --rm \
         -p 3000:3000 \
+	-p 8000:8000 \
         --volume /dev:/dev \
         --volume "$AT_ROOT_DIR:$CTR_AT_ROOT_DIR:z" \
         --env OPT_LOCAL_IMAGES_PATH="$(dirname "$CTR_MICROVM_IMAGES_DIR")" \

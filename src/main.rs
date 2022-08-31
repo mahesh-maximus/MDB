@@ -2,12 +2,26 @@ use std::{
     fs,
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
+    thread,
+    time::Duration
 };
+
 
 fn main() {
 
     println!("Starting MDB ...");
 
+    thread::spawn(|| {
+        let listener = TcpListener::bind("0.0.0.0:8000").unwrap();
+
+        for stream in listener.incoming() {
+            let stream = stream.unwrap();
+
+            println!("WS connection");
+
+            handle_ws_connection(stream);
+        }
+    });
 
     let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
 
@@ -37,3 +51,10 @@ fn handle_connection(mut stream: TcpStream) {
         println!("Not GET");
     }
 }
+
+fn handle_ws_connection(mut stream: TcpStream) {
+
+        let response = "777";
+
+        stream.write_all(response.as_bytes()).unwrap();
+}   

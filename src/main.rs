@@ -3,7 +3,8 @@ use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
     thread,
-    time::Duration
+    time::Duration,
+    str
 };
 use sha1::{Sha1, Digest};
 use base64::{encode, decode};
@@ -98,7 +99,43 @@ fn handle_ws_connection(mut stream: TcpStream) {
 fn handle_ws_new_connection(mut stream: TcpStream) { 
     println!("WS new");
     let buf_reader = BufReader::new(&mut stream);
+    let mut  isHandshake = false;
+    let mut  webSocketKey = String::new();
     for line in buf_reader.lines() {
-        println!("WS new line {}", line.unwrap());
+        let uwLine = line.unwrap();
+       // println!("WS new line {}", line.unwrap());
+        if uwLine.starts_with("Sec-WebSocket-Key:") {        
+            println!("Web Socket All  Key: {}__", uwLine);
+            let abc: String = uwLine.trim().chars().skip(18).take(uwLine.len()).collect();
+            webSocketKey = abc.to_string();
+            println!("Web Socket Key: {}__", webSocketKey);
+            break;
+        } else if uwLine.starts_with("GET / HTTP/1.1") {
+            println!("Handshake GET");
+            isHandshake = true;
+        } else {
+           println!("Line : {}", uwLine);
+        }
     }
+
+    if(isHandshake) {
+      //  println!("WSK: {}", webSocketKey);
+
+        let mut hasher = Sha1::new();    
+        hasher.update(webSocketKey.as_bytes());
+        hasher.update(b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+        let result = hasher.finalize();   
+        let key  = encode(result);
+
+        let response = format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {key}\r\n\r\n",);
+        
+        println!("RESPONSE HKS: {}", response);
+
+        stream.write_all(response.as_bytes()).unwrap();
+
+    } else {
+         println!("NOT Handshake");
+    }
+
+    
 }

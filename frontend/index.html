@@ -33,6 +33,7 @@ const socket = new WebSocket('ws://20.228.172.250:8000');
 
 // Connection opened
 socket.addEventListener('open', (event) => {
+	alert("WS open con");
     socket.send('Hello Server!');
 });
 

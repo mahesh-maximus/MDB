@@ -81,6 +81,8 @@ RUN cp /config.fish ~/.config/fish/config.fish
 RUN nvim --headless +PlugInstall +qall
 
 RUN timeout 5 nvim  --headless  "+CocInstall coc-rust-analyzer"; exit 0
+RUN timeout 5 nvim  --headless  "+CocInstall coc-html"; exit 0
+RUN timeout 5 nvim  --headless  "+CocInstall coc-tsserver"; exit 0
 
 RUN chsh -s $(which fish)
 

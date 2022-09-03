@@ -62,6 +62,10 @@ RUN apt -y install fish
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION_TAG}/tini-static-amd64 /sbin/tini
 RUN chmod +x /sbin/tini
 
+RUN mkdir -p ~/.local/bin \
+	&& curl -L https://github.com/rust-lang/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > ~/.local/bin/rust-analyzer \
+	&& chmod +x ~/.local/bin/rust-analyzer 
+
 RUN mkdir $HOME/.config
 
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \

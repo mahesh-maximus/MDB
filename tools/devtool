@@ -368,6 +368,14 @@ cmd_exec_shell() {
     docker exec -it "$AT_DEVCTR_NAME"  bash
 }
 
+cmd_prune() {
+    say_warn 'Remove all unused containers, networks, images (both dangling and unreferenced), and optionally, volumes.'
+    say "Are you sure you want remove all containers?"
+    get_user_confirmation || die "Aborted."
+
+    docker system prune -a
+}
+
 cmd_help() {
     echo ""
     echo "Vulcan $(basename $0)"

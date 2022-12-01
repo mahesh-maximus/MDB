@@ -1,5 +1,5 @@
-# FROM ubuntu:latest
-FROM ubuntu:20.04
+FROM ubuntu:latest
+#FROM ubuntu:20.04
 
 ARG AT_SRC_DIR="/mdb"
 ARG TINI_VERSION_TAG="v0.18.0"

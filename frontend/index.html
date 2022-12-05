@@ -35,10 +35,19 @@ const socket = new WebSocket('ws://20.228.172.250:8000');
 socket.addEventListener('open', (event) => {
 	alert("WS open con");
     socket.send('Hello Server!');
+
+	setTimeout(() => {
+	 socket.send('Hello Server XXXXXXXXXXXXXXXXXXXXXXX !');
+			
+  console.log("Delayed for 10 second.");
+}, "10000")
+		
+
 });
 
 // Listen for messages
 socket.addEventListener('message', (event) => {
+	alert(event.data);		
     console.log('Message from server ', event.data);
 });
 

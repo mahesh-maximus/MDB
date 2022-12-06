@@ -1,26 +1,24 @@
+use std::thread::spawn;
 use std::{
     fs,
+    io::{Read, Result, Write},
     net::{TcpListener, TcpStream},
-    thread,
+    str, thread,
     time::Duration,
-    str,
-    io::{Read, Result, Write}
 };
-use std::thread::spawn;
 use tungstenite::accept;
 
 pub fn process_requests() {
     println!("HTTP Request Processor <<>>");
 
     thread::spawn(|| {
+        let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
 
-    let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
+        for stream in listener.incoming() {
+            let stream = stream.unwrap();
 
-    for stream in listener.incoming() {
-        let stream = stream.unwrap();
-
-        handle_connection(stream);
-    }
+            handle_connection(stream);
+        }
     });
 }
 
@@ -39,12 +37,12 @@ fn handle_connection(mut stream: TcpStream) {
     } else {
         ("HTTP/1.1 404 NOT FOUND", "404.html")
     };
-    
+
     let baseFrontendPath = "/mdb/frontend/";
     let a = format!("{}{}", baseFrontendPath, filename);
     println!("zzzzzzzzzzzzzzzzzzz : {}", a);
     let contents = fs::read_to_string(a).unwrap();
-    
+
     let response = format!(
         "{}\r\nContent-Length: {}\r\n\r\n{}",
         status_line,
@@ -53,6 +51,5 @@ fn handle_connection(mut stream: TcpStream) {
     );
 
     stream.write_all(response.as_bytes()).unwrap();
-    stream.flush().unwrap();  
+    stream.flush().unwrap();
 }
-

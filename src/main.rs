@@ -8,11 +8,13 @@ use std::{
 };
 use std::thread::spawn;
 use tungstenite::accept;
+mod http_request_processor;
+mod ws_request_processor;
 
 fn main() {
 
     println!("Starting MDB ...");
-
+/*
     thread::spawn(|| {
       //  let listener = TcpListener::bind("0.0.0.0:8000").unwrap();
 
@@ -33,6 +35,11 @@ fn main() {
 
    });
 
+*/
+
+    ws_request_processor::process_requests();
+
+    http_request_processor::process_requests();
 
     println!("Starting WS");
 
@@ -44,8 +51,6 @@ fn main() {
         handle_connection(stream);
     }
     
-
-
 }
 
 fn handle_connection(mut stream: TcpStream) {

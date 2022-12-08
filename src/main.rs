@@ -1,6 +1,6 @@
+use std::env::{args, Args};
 use std::thread;
 use std::time::Duration;
-use std::env::{args, Args};
 
 mod http_request_processor;
 mod ws_request_processor;

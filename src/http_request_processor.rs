@@ -47,11 +47,10 @@ fn handle_connection(mut stream: TcpStream) {
         ("HTTP/1.1 404 NOT FOUND", "404.html")
     };
 
-    let baseFrontendPath = "/mdb/frontend/";
-    let a = format!("{}{}", baseFrontendPath, filename);
-    println!("Response filename : {}", a);
+    let file_name = format!("{}{}", "/mdb/frontend/", filename);
+    println!("Response filename : {}", file_name);
 
-    let contents = fs::read_to_string(a).unwrap();
+    let contents = fs::read_to_string(file_name).unwrap();
 
     let response = format!(
         "{}\r\nContent-Length: {}\r\n\r\n{}",
@@ -63,3 +62,5 @@ fn handle_connection(mut stream: TcpStream) {
     stream.write_all(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
+
+

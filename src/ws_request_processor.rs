@@ -1,11 +1,9 @@
-use std::{
-    fs,
-    io::{Read, Result, Write},
-    net::{TcpListener, TcpStream},
-    str, thread,
-    time::Duration,
-};
-
+use std::thread;
+use std::fs;
+use std::io::{Read, Result, Write};
+use std::net::{TcpListener, TcpStream};
+use std::str;
+use std::time::Duration;
 use std::thread::spawn;
 use tungstenite::accept;
 

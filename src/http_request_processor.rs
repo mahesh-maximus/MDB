@@ -1,12 +1,10 @@
 use std::thread::spawn;
-use std::{
-    fs,
-    io::{Read, Result, Write},
-    net::{TcpListener, TcpStream},
-    str, thread,
-    time::Duration,
-};
-
+use std::fs;
+use std::io::{Read, Result, Write};
+use std::net::{TcpListener, TcpStream};
+use std::str;
+use std::thread;
+use std::time::Duration;
 use std::io::{prelude::*, BufReader};
 
 pub fn process_requests() {
@@ -16,9 +14,10 @@ pub fn process_requests() {
         let listener = TcpListener::bind("0.0.0.0:3000").unwrap();
 
         for stream in listener.incoming() {
-            let stream = stream.unwrap();
-
-            handle_connection(stream);
+            thread::spawn(||{
+                let stream = stream.unwrap();
+                handle_connection(stream);
+            });
         }
     });
 }

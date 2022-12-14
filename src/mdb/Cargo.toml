@@ -1,0 +1,13 @@
+[package]
+name = "mdb"
+version = "1.1.0"
+authors = ["Mahesh"]
+edition = "2021"
+build = "../../build.rs"
+description = "Description."
+homepage = "https://mahesh-maximus.github.io//mahesh-maximus/"
+license = "MIT License"
+
+[dependencies]
+net = { path = "../net" }
+

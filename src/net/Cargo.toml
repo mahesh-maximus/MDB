@@ -1,0 +1,9 @@
+[package]
+name = "net"
+version = "1.0.0"
+authors = ["Mahesh"]
+edition = "2021"
+license = ""
+
+[dependencies]
+tungstenite = "0.18.0"

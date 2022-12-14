@@ -1,13 +1,11 @@
-use std::thread::spawn;
 use std::fs;
-use std::io::{Read, Result, Write};
+use std::io::Write;
 use std::net::{TcpListener, TcpStream};
-use std::str;
 use std::thread;
 use std::time::Duration;
 use std::io::{prelude::*, BufReader};
 
-pub fn process_requests() {
+pub fn process_http_requests() {
     println!("HTTP Request Processor <<>>");
 
     thread::spawn(|| {
@@ -62,5 +60,3 @@ fn handle_connection(mut stream: TcpStream) {
     stream.write_all(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
-
-

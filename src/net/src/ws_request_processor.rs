@@ -1,13 +1,9 @@
 use std::thread;
-use std::fs;
-use std::io::{Read, Result, Write};
-use std::net::{TcpListener, TcpStream};
-use std::str;
-use std::time::Duration;
+use std::net::{TcpListener};
 use std::thread::spawn;
 use tungstenite::accept;
 
-pub fn process_requests() {
+pub fn process_ws_requests() {
     println!("WS Reqiest processor");
     thread::spawn(|| {
         //  let listener = TcpListener::bind("0.0.0.0:8000").unwrap();

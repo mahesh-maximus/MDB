@@ -2,12 +2,9 @@ use std::env::{args, Args};
 use std::thread;
 use std::time::Duration;
 
-use net::{p_http_r, p_ws_r};
+use net::http_request_processor::process_http_requests;
+use net::ws_request_processor::process_ws_requests;
 
-/*
-mod http_request_processor;
-mod ws_request_processor;
-*/
 
 fn main() {
     println!("Starting MDB ...");
@@ -17,13 +14,9 @@ fn main() {
 
     println!("{:?}", first);
     
-    p_ws_r();
-
-    p_http_r();
-
-    //ws_request_processor::process_requests();
-
-    //http_request_processor::process_requests();
+    net::http_request_processor::process_http_requests();
+    
+    net::ws_request_processor::process_ws_requests();
 
     println!("Started MDB");
 

@@ -2,10 +2,8 @@ use std::env::{args, Args};
 use std::thread;
 use std::time::Duration;
 
-use net::http_request_processor::process_http_requests;
-//use net::ws_request_processor::process_ws_requests;
-
 use net::ws_request_processor::WebSocketRequestProcessor;
+use net::http_request_processor::HttpRequestProcessor;
 
 fn main() {
     println!("Starting MDB ...");
@@ -14,15 +12,14 @@ fn main() {
     let first = args.nth(0);
 
     println!("{:?}", first);
+   
+    let mut http_request_processor = HttpRequestProcessor::new("0.0.0.0:3000".to_string());
+    http_request_processor.print_address();
+    http_request_processor.process_http_requests();
     
-    net::http_request_processor::process_http_requests();
-    
-    //net::ws_request_processor::process_ws_requests();
-
-    let mut a = WebSocketRequestProcessor::new("0.0.0.0:3000".to_string());
-    a.process_ws_requests();
-    
-    a.print_address();
+    let mut ws_request_processor = WebSocketRequestProcessor::new("0.0.0.0:8000".to_string());
+    ws_request_processor.process_ws_requests();
+    ws_request_processor.print_address();
 
     println!("Started MDB");
 

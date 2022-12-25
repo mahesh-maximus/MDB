@@ -6,6 +6,11 @@ use net::ws_request_processor::WebSocketRequestProcessor;
 use net::http_request_processor::HttpRequestProcessor;
 
 fn main() {
+    unsafe {
+        // Harmless print to standard output.
+        libc::syscall(libc::SYS_write, libc::STDOUT_FILENO, "Hello, world!\n", 14);
+    }
+
     println!("Starting MDB ...");
 
     let mut args: Args = args();

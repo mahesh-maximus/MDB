@@ -4,13 +4,13 @@ use std::net::{TcpListener, TcpStream};
 use std::thread;
 use std::time::Duration;
 use std::io::{prelude::*, BufReader};
+use crate::login_processor::LoginProcessor;
 
 pub struct HttpRequestProcessor {
     address: String,
 }
 
 impl HttpRequestProcessor {
-    
     pub fn new(address: String) -> Self {
         Self {
             address,
@@ -53,6 +53,9 @@ impl HttpRequestProcessor {
         println!("First request item HTTP method: {}", http_request[0]);
 
         println!("Request: {:#?}", http_request);
+
+        let mut login_processor  = LoginProcessor::new("mahesh".to_string(), "123".to_string());
+        login_processor.validate_username_password();
 
         let (status_line, filename) = if http_request[0] == "GET / HTTP/1.1" {
             ("HTTP/1.1 200 OK", "index.html")

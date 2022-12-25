@@ -9,5 +9,7 @@ homepage = "https://mahesh-maximus.github.io//mahesh-maximus/"
 license = "MIT License"
 
 [dependencies]
+libc = "0.2.139"
+
 net = { path = "../net" }
 

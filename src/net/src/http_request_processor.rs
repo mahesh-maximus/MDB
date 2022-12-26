@@ -56,6 +56,16 @@ impl HttpRequestProcessor {
 
         let mut login_processor  = LoginProcessor::new("mahesh".to_string(), "123".to_string());
         login_processor.validate_username_password();
+        
+        let cookie_index =  http_request.iter().position(|r| r.starts_with("Cookie: ")).unwrap_or(0);
+        
+        println!("Cockie index: {}", cookie_index.to_string());
+
+        if cookie_index > 0 {
+            println!("Cookies aviable: {}", http_request[cookie_index]);
+        } else {
+            println!("Cookie not found");
+        }
 
         let (status_line, filename) = if http_request[0] == "GET / HTTP/1.1" {
             ("HTTP/1.1 200 OK", "index.html")

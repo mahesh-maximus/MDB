@@ -17,7 +17,6 @@
   	</head>
   	
 	<body>
-
 		<script>
 			alert("Login");
 		</script>
@@ -36,7 +35,8 @@
         			SvgIcon,
 			        Link,
 				Button,
-				Stack
+				Stack,
+				TextField
      			 } = MaterialUI;
 
       			// Create a theme instance.
@@ -58,31 +58,44 @@
         			return (
           				<Typography variant="body2" color="text.secondary" align="center">
             					{'Copyright © '}
-            					<Link color="inherit" href="https://mui.com/">
+            					<Link color="inherit" href="https://mahesh-maximus.github.io//mahesh-maximus/">
               						My Website
-            					</Link>{'https://mahesh-maximus.github.io//mahesh-maximus/ '}
+            					</Link>{' '}
             					{new Date().getFullYear()}
             					{'.'}		
-          					</Typography>
+          				</Typography>
         			);
       			}
 
       			function App() {
+			  	function handleClick() {
+					alert("Login");
+				}
+
         			return (
           				<Container maxWidth="sm">
             					<Box sx={{ my: 4 }}>
-	        					<Stack direction="row" spacing={2}>
-      								<Button color="secondary">Secondary</Button>
-      								<Button variant="contained" color="success">
-        								Success
-      								</Button>
-  	    							<Button variant="outlined" color="error">
-        								Error
-      								</Button>
-    							</Stack>
-              						<Typography variant="h4" component="h1" gutterBottom>
-								MAHESH WORLD
-       		       					</Typography>
+							<Stack spacing={2}>
+	        						<Stack spacing={2}>
+    									<TextField 
+										id="outlined-search" 
+										label="User Name" 
+										type="search" />
+								        <TextField
+          									id="outlined-password-input"
+          									label="Password"
+          									type="password"
+          									autoComplete="current-password" />
+								</Stack>
+								<Stack direction="row"justifyContent="flex-end"  alignItems="center"  spacing={2}>
+									<Button variant="contained" color="error">
+  										Reset
+									</Button>
+									<Button variant="contained" color="success" onClick={handleClick}> 
+  										Login
+									</Button>
+								</Stack>
+							</Stack>
               						<Copyright />
             					</Box>
           				</Container>

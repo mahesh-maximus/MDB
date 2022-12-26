@@ -61,21 +61,26 @@ impl HttpRequestProcessor {
         
         println!("Cockie index: {}", cookie_index.to_string());
 
+        let should_load_login_page = true;
+        let mut response = String::new();
+
         if cookie_index > 0 {
             println!("Cookies aviable: {}", http_request[cookie_index]);
-        } else {
-            println!("Cookie not found");
         }
 
-        let (status_line, filename) = if http_request[0] == "GET / HTTP/1.1" {
-            ("HTTP/1.1 200 OK", "index.html")
-        } else if http_request[0] == "GET /sleep HTTP/1.1" {
-            thread::sleep(Duration::from_secs(5));
-            ("HTTP/1.1 200 OK", "index.html")
+        if should_load_login_page {
+            response = Self::create_response("HTTP/1.1 200 OK".to_string(), "login.html".to_string());    
+        } else if http_request[0] == "GET / HTTP/1.1" {
+            response = Self::create_response("HTTP/1.1 200 OK".to_string(), "index.html".to_string());  
         } else {
-            ("HTTP/1.1 404 NOT FOUND", "404.html")
-        };
+            response = Self::create_response("HTTP/1.1 200 OK".to_string(), "404.html".to_string());  
+        }
 
+        stream.write_all(response.as_bytes()).unwrap();
+        stream.flush().unwrap();
+    }
+
+    fn create_response(status_line: String, filename: String) -> String { 
         let file_name = format!("{}{}", "/mdb/frontend/", filename);
         println!("Response filename : {}", file_name);
 
@@ -88,7 +93,6 @@ impl HttpRequestProcessor {
             contents
         );
 
-        stream.write_all(response.as_bytes()).unwrap();
-        stream.flush().unwrap();
+        response 
     }
 }

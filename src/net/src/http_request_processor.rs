@@ -2,12 +2,20 @@ use std::fs;
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
 use std::thread;
-use std::time::Duration;
 use std::io::{prelude::*, BufReader};
 use crate::login_processor::LoginProcessor;
 
+use std::fs::File;
+use std::io::LineWriter;
+
 pub struct HttpRequestProcessor {
     address: String,
+}
+
+struct Request {
+    headers: Vec<String>,
+    body: String,
+    test: String,
 }
 
 impl HttpRequestProcessor {
@@ -39,25 +47,43 @@ impl HttpRequestProcessor {
     }
 
     fn handle_connection(mut stream: TcpStream) {
-        let buf_reader = BufReader::new(&mut stream);
-        let http_request: Vec<_> = buf_reader
-            .lines()
-            .map(|result| result.unwrap())
-            .take_while(|line| !line.is_empty())
-            .collect();
+        let buf_reader = BufReader::new(&mut stream); 
 
-        for request_item in &http_request {
+        let headers: Vec<_>  = buf_reader.lines()
+            .map(|r| r.unwrap())
+            .take_while(|x| !x.is_empty())
+            .collect();
+        
+
+        let x_body_index = headers.iter().position(|r| r.starts_with("X-Body: ")).unwrap_or(0);
+        let mut x_body = String::new();
+
+        if x_body_index > 0 {
+            x_body = headers[x_body_index].to_string();    
+        }
+        
+        let request = Request {
+            headers,
+            test: "test".to_string(),
+            body: x_body,
+        };
+
+        println!("request_headers Vec len: {}", request.headers.len());
+
+        for request_item in &request.headers {
             println!("Request item: {request_item}");
         }      
 
-        println!("First request item HTTP method: {}", http_request[0]);
+        println!("First request item HTTP method: {}", request.headers[0]);
 
-        println!("Request: {:#?}", http_request);
+        println!("Request: {:#?}", request.headers);
+      
+        println!("Request Body : {}", request.body);
 
         let mut login_processor  = LoginProcessor::new("mahesh".to_string(), "123".to_string());
         login_processor.validate_username_password();
         
-        let cookie_index =  http_request.iter().position(|r| r.starts_with("Cookie: ")).unwrap_or(0);
+        let cookie_index =  request.headers.iter().position(|r| r.starts_with("Cookie: ")).unwrap_or(0);
         
         println!("Cockie index: {}", cookie_index.to_string());
 
@@ -65,12 +91,12 @@ impl HttpRequestProcessor {
         let mut response = String::new();
 
         if cookie_index > 0 {
-            println!("Cookies aviable: {}", http_request[cookie_index]);
+            println!("Cookies aviable: {}", request.headers[cookie_index]);
         }
 
         if should_load_login_page {
             response = Self::create_response("HTTP/1.1 200 OK".to_string(), "login.html".to_string());    
-        } else if http_request[0] == "GET / HTTP/1.1" {
+        } else if request.headers[0] == "GET / HTTP/1.1" {
             response = Self::create_response("HTTP/1.1 200 OK".to_string(), "index.html".to_string());  
         } else {
             response = Self::create_response("HTTP/1.1 200 OK".to_string(), "404.html".to_string());  
@@ -94,5 +120,29 @@ impl HttpRequestProcessor {
         );
 
         response 
+    }
+
+    #[allow(dead_code)]
+    fn extract_request(mut stream: TcpStream) -> Request {
+        let buf_reader = BufReader::new(&mut stream); 
+
+        let headers: Vec<_>  = buf_reader.lines()
+            .map(|r| r.unwrap())
+            .take_while(|x| !x.is_empty())
+            .collect();
+        
+
+        let x_body_index = headers.iter().position(|r| r.starts_with("X-Body: ")).unwrap_or(0);
+        let mut x_body = String::new();
+
+        if x_body_index > 0 {
+            x_body = headers[x_body_index].to_string();    
+        }
+        
+        Request {
+            headers,
+            test: "test".to_string(),
+            body: x_body,
+        }
     }
 }

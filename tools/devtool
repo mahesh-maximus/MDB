@@ -384,7 +384,7 @@ cmd_help() {
 }
 
 main() {
-
+    say "Starting devtool ..."
     if [ $# = 0 ]; then
         die "No command provided. Please use \`$0 help\` for help."
     fi

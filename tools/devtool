@@ -54,6 +54,39 @@ ok_or_die() {
 
 main() {
     say "Starting devtool ..."
+
+    if [ $# = 0 ]; then
+        die "No command provided. Please use \`$0 help\` for help."
+    fi
+
+    # Parse main command line args.
+    #
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -h|--help)              { cmd_help; exit 1;     } ;;
+            -m|--MM)                { say "--MM"; exit 1;  } ;;
+            -*)
+                die "Unknown arg: $1. Please use \`$0 help\` for help."
+            ;;
+            *)
+                break
+            ;;
+        esac
+        shift
+    done
+
+    # $1 is now a command name. Check if it is a valid command and, if so,
+    # run it.
+    #
+    declare -f "cmd_$1" > /dev/null
+    ok_or_die "Unknown command: $1. Please use \`$0 help\` for help."
+
+    cmd=cmd_$1
+    shift
+
+    # $@ is now a list of command-specific args
+    #
+    $cmd "$@"    
 }
 
 main "$@"

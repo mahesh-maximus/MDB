@@ -1,3 +1,5 @@
+# Naming things is hard
+MY_NAME="MDS $(basename "$0")"
 
 # Send a decorated message to stdout, followed by a new line
 #

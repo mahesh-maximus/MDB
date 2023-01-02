@@ -69,10 +69,39 @@
 #     would help with reproducible builds (in addition to pinning Cargo.lock)
 
 # Development container image (without tag)
-DEVCTR_IMAGE_NO_TAG="public.ecr.aws/firecracker/fcuvm"
+DEVCTR_IMAGE_NO_TAG="public.mahesh/mahesh-maximus/mdb"
 
 # Development container tag
-DEVCTR_IMAGE_TAG="v47"
+DEVCTR_IMAGE_TAG="v1"
+
+# Name of the devctr.
+MDB_DEVCTR_NAME="mdb"
+
+# Full path to the Valcan tools dir on the host.
+MDB_TOOLS_DIR=$(cd "$(dirname "$0")" && pwd)
+
+# Full path to the Valcan sources dir on the host.
+MDB_ROOT_DIR=$(cd "${MDB_TOOLS_DIR}/.." && pwd)
+
+# Full path to devctr dir on the host.
+MDB_DEVCTR_DIR="${MDB_ROOT_DIR}/tools/devctr"
+
+# Full path to the Firecracker sources dir, as bind-mounted in the container.
+CTR_MDB_ROOT_DIR="/mdb"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Development container image (name:tag)
 # This should be updated whenever we upgrade the development container.
@@ -161,6 +190,8 @@ DEFAULT_RAMDISK_PATH=/mnt/devtool-ramdisk
 # Upon returning from this call, the caller can be certain Docker is available.
 #
 ensure_docker() {
+    say "Ensuring docker is available"
+
     NEWLINE=$'\n'
     output=$(which docker 2>&1)
     ok_or_die "Docker not found. Aborting." \
@@ -207,7 +238,7 @@ retry_cmd() {
 # available on this system.
 #
 ensure_devctr() {
-
+   say "Ensuring dev container ..."
     # We depend on having Docker present.
     ensure_docker
 
@@ -219,7 +250,8 @@ ensure_devctr() {
 
         # Run docker pull 5 times in case it fails - sleep 3 seconds
         # between attempts
-        retry_cmd "docker pull $DEVCTR_IMAGE" 5 3
+        #retry_cmd "docker pull $DEVCTR_IMAGE" 5 3
+	retry_cmd cmd_build_devctr 5 3
 
         ok_or_die "Error pulling docker image. Aborting."
     }
@@ -293,6 +325,7 @@ cmd_fix_perms() {
 # Builds the development container from its Dockerfile.
 #
 cmd_build_devctr() {
+    say "Building dev container"	
     arch=$(uname -m)
     docker_file_name="Dockerfile.$arch"
     build_args="--build-arg TMP_POETRY_DIR=$CTR_POETRY_TMP_DIR"
@@ -312,11 +345,11 @@ cmd_build_devctr() {
         shift
     done
 
-    docker build -t "$DEVCTR_IMAGE_NO_TAG" -f "$FC_DEVCTR_DIR/$docker_file_name" $build_args .
+    docker build -t "$DEVCTR_IMAGE" -f "$FC_DEVCTR_DIR/$docker_file_name" .
 
     # Copy back the lockfile, since a new dependency or version would have
     # updated it.
-    copy_poetry_lockfile
+    # copy_poetry_lockfile
 }
 
 # Validate that the repo targetted for a release exists.
@@ -477,6 +510,7 @@ get_branch() {
 # Usage: run_devctr <docker args> -- <container args>
 # Example: run_devctr --privileged -- bash -c "echo 'hello world'"
 run_devctr() {
+    say "Start running dev container"
     docker_args=()
     ctr_args=()
     docker_args_done=false
@@ -491,27 +525,20 @@ run_devctr() {
     done
 
     # If we're running in a terminal, pass the terminal to Docker and run
-    # the container interactively
+    
     [[ -t 0 ]] && docker_args+=("-i")
     [[ -t 1 ]] && docker_args+=("-t")
-
-    # Try to pass these environments from host into container for network proxies
-    proxies=(http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy NO_PROXY)
-    for i in "${proxies[@]}"; do
-        if [[ ! -z ${!i} ]]; then
-            docker_args+=("--env") && docker_args+=("$i=${!i}")
-        fi
-    done
 
     # Finally, run the dev container
     # Use 'z' on the --volume parameter for docker to automatically relabel the
     # content and allow sharing between containers.
     docker run "${docker_args[@]}" \
+        --name "$MDB_DEVCTR_NAME" \
         --rm \
+        -p 3000:3000 \
+	-p 8000:8000 \
         --volume /dev:/dev \
-        --volume "$FC_ROOT_DIR:$CTR_FC_ROOT_DIR:z" \
-        --env OPT_LOCAL_IMAGES_PATH="$(dirname "$CTR_MICROVM_IMAGES_DIR")" \
-        --env PYTHONDONTWRITEBYTECODE=1 \
+        --volume "$MDB_ROOT_DIR:$CTR_MDB_ROOT_DIR:z" \
         "$DEVCTR_IMAGE" "${ctr_args[@]}"
 }
 
@@ -1199,6 +1226,7 @@ cmd_test() {
 # Please see `$0 help` for more information.
 #
 cmd_shell() {
+    say "Running 'shell' command"
 
     # By default, we run the container as the current user.
     privileged=false
@@ -1208,11 +1236,6 @@ cmd_shell() {
         case "$1" in
             "-h"|"--help")          { cmd_help; exit 1; } ;;
             "-p"|"--privileged")    { privileged=true;  } ;;
-            "-r"|"--ramdisk")
-                  shift
-                  local ramdisk_size="$1"
-                  local ramdisk=true
-                  ;;
               "--")               { shift; break;     } ;;
             *)
                 die "Unknown argument: $1. Please use --help for help."
@@ -1223,28 +1246,21 @@ cmd_shell() {
 
     # Make sure we have what we need to continue.
     ensure_devctr
-    ensure_build_dir
-
-    if [[ $ramdisk = true ]]; then
-        mount_ramdisk ${ramdisk_size}
-        ramdisk_args="--volume ${DEFAULT_RAMDISK_PATH}:${DEFAULT_TEST_SESSION_ROOT_PATH}"
-    fi
 
     if [[ $privileged = true ]]; then
         # If requested, spin up a privileged container.
         #
         say "Dropping to a privileged shell prompt ..."
-        say "Note: $FC_ROOT_DIR is bind-mounted under $CTR_FC_ROOT_DIR"
+        say "Note: $FC_ROOT_DIR is bind-mounted under $CTR_AT_ROOT_DIR"
         say_warn "You are running as root; any files that get created under" \
-            "$CTR_FC_ROOT_DIR will be owned by root."
+            "$CTR_AT_ROOT_DIR will be owned by root."
+
         run_devctr \
             --privileged \
             --ulimit nofile=4096:4096 \
             --ulimit memlock=-1:-1 \
             --security-opt seccomp=unconfined \
-            --workdir "$CTR_FC_ROOT_DIR" \
-            -v /boot:/boot \
-            ${ramdisk_args} \
+            --workdir "$CTR_AT_ROOT_DIR" \
             -- \
             bash
         ret=$?
@@ -1255,7 +1271,7 @@ cmd_shell() {
         cmd_fix_perms
     else
         say "Dropping to shell prompt as user $(whoami) ..."
-        say "Note: $FC_ROOT_DIR is bind-mounted under $CTR_FC_ROOT_DIR"
+        say "Note: $FC_ROOT_DIR is bind-mounted under $CTR_AT_ROOT_DIR"
         say_warn "You won't be able to run Firecracker via the jailer," \
             "but you can still build it."
         say "You can use \`$0 shell --privileged\` to get a root shell."
@@ -1269,15 +1285,11 @@ cmd_shell() {
             --ulimit nofile=4096:4096 \
             --ulimit memlock=-1:-1 \
             --device=/dev/kvm:/dev/kvm \
-            --workdir "$CTR_FC_ROOT_DIR" \
+            --workdir "$CTR_AT_ROOT_DIR" \
             --env PS1="$(whoami)@\h:\w\$ " \
             -- \
             bash --norc
         ret=$?
-    fi
-
-    if [[ $ramdisk = true ]]; then
-        umount_ramdisk
     fi
 
     return $ret
@@ -2118,7 +2130,7 @@ EOF
 }
 
 main() {
-
+    say "Stating devetool ..."
     if [ $# = 0 ]; then
     die "No command provided. Please use \`$0 help\` for help."
     fi

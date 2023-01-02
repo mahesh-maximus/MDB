@@ -279,9 +279,9 @@ cmd_fix_perms() {
 
     # Yes, running Docker to get elevated privileges, just to chown some files
     # is a dirty hack.
-    run_devctr \
-        -- \
-        chown -R "$(id -u):$(id -g)" "$CTR_MDB_BUILD_DIR"
+    #run_devctr \
+       # -- \
+       # chown -R "$(id -u):$(id -g)" "$CTR_MDB_BUILD_DIR"
 
     say "perms fixed"
 }
@@ -314,21 +314,6 @@ cmd_build_devctr() {
     # Copy back the lockfile, since a new dependency or version would have
     # updated it.
     # copy_poetry_lockfile
-}
-
-# Validate that the repo targetted for a release exists.
-#
-validate_repo() {
-    owner="$1"
-    repo="$2"
-    if [ -z "$owner" ]; then
-        die "GitHub owner cannot be empty."
-    fi
-    git_link="https://api.github.com/repos/$owner/$repo"
-    status_code=$(curl --write-out %{http_code} --silent --output /dev/null $git_link)
-    if [[ "$status_code" -ne 200 ]] ; then
-        die "GitHub repo $git_link is not valid. Please provide a valid user/org and repository."
-    fi
 }
 
 # Validate the user supplied kernel version number.
@@ -385,31 +370,6 @@ run_devctr() {
         "$DEVCTR_IMAGE" "${ctr_args[@]}"
 }
 
-# Helper function to test that the argument provided is a valid path to a SSH key.
-#
-test_key() {
-    ssh-keygen -lf "$1" &>/dev/null
-    ret=$?
-    [ $ret -ne 0 ] && die "$1 is not a valid key file."
-}
-
-# Copies the ```poetry.lock``` file to the host, upgrading the versions if
-# requested.
-#
-copy_poetry_lockfile() {
-    # defined in Dockerfile
-    lock_file_location_on_host="$FC_DEVCTR_DIR/poetry.lock"
-    image_id=$(docker images -q "$DEVCTR_IMAGE_NO_TAG" | head -n 1)
-    dummy_container_name=$(uuidgen)
-    dummy_container_id=$(docker create --name "$dummy_container_name" "$image_id" bash)
-
-    docker cp \
-        "$dummy_container_id":"$CTR_POETRY_TMP_DIR"/poetry.lock \
-        "$lock_file_location_on_host"
-
-    docker rm -f "$dummy_container_name"
-}
-
 create_dir() {
     # Create a dir for the provided path.
     dir="$1"
@@ -427,7 +387,7 @@ create_dir() {
 #
 cmd_help() {
     echo ""
-    echo "Firecracker $(basename $0)"
+    echo "Mahesh Debugger $(basename $0)"
     echo "Usage: $(basename $0) [<args>] <command> [<command args>]"
     echo ""
     echo "Global arguments"
@@ -456,8 +416,6 @@ cmd_help() {
     echo "        Builds a kernel image custom-tailored for our CI."
     echo "        -c, --config  Path to the config file."
     echo "        -n, --nproc  Number of cores to use for building kernel."
-
-    help_build_release_archive
 
     echo "    build_rootfs -s|--size [--partuuid]"
     echo "        Builds a rootfs image custom-tailored for use in our CI."
@@ -508,8 +466,6 @@ cmd_help() {
     echo "        dependencies and credits."
     echo ""
 
-    help_release
-
     echo ""
     echo "    shell [--privileged]"
     echo "        Launch the development container and open an interactive BASH shell."
@@ -538,12 +494,11 @@ cmd_help() {
     echo "        Strip debug symbols from the Firecracker release binaries."
     echo ""
 
-    help_upload_assets
 }
 
 cmd_distclean() {
     # List of folders to remove.
-    dirs=("build" "test_results")
+    dirs=("target")
 
     for dir in "${dirs[@]}"; do
         if [ -d "$dir" ]; then
@@ -564,9 +519,8 @@ cmd_distclean() {
 #
 cmd_shell() {
     say "Running 'shell' command"
-
-    say_noln "Current branch name: " 
-    get_branch
+    check_kernver
+    cmd_checkenv
 
     # By default, we run the container as the current user.
     privileged=false
@@ -633,15 +587,6 @@ cmd_shell() {
     fi
 
     return $ret
-}
-
-# Check if able to run firecracker.
-# ../docs/getting-started.md#prerequisites
-
-ensure_kvm_rw () {
-    [[ -c /dev/kvm && -w /dev/kvm && -r /dev/kvm ]] || \
-        say_err "FAILED: user $(whoami) doesn't have permission to" \
-                "access /dev/kvm."
 }
 
 check_kernver () {
@@ -742,9 +687,8 @@ cmd_checkenv() {
     done
     PROD_DOC="../docs/prod-host-setup.md"
     QUICKSTART="../docs/getting-started.md#prerequisites"
-    say "Checking prerequisites for running Firecracker."
+    say "Checking prerequisites for running Mahesh Debugger."
     say "Please check $QUICKSTART in case of any error."
-    ensure_kvm_rw
     check_kernver
     check_vm
     say "Checking Host Security Configuration."
@@ -760,9 +704,10 @@ cmd_checkenv() {
 
 
 main() {
+    SECONDS=0		
     say "Stating devetool"
-    check_kernver
-    cmd_checkenv
+    say_noln "Current branch name: "
+    get_branch
 
     if [ $# = 0 ]; then
     die "No command provided. Please use \`$0 help\` for help."
@@ -796,6 +741,8 @@ main() {
     # $@ is now a list of command-specific args
     #
     $cmd "$@"
+
+    echo "Elapsed Time (using \$SECONDS): $SECONDS seconds"
 }
 
 main "$@"

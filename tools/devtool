@@ -2,6 +2,7 @@
 
 # Elapsed Time (using $SECONDS): 387 seconds
 # Elapsed Time (using $SECONDS): 373 seconds
+# Elapsed Time (using $SECONDS): 348 seconds
 
 
 # Development container image (without tag)
@@ -28,19 +29,6 @@ CTR_MDB_ROOT_DIR="/mdb"
 # Full path to the build dir, as bind-mounted in the container.
 CTR_MDB_BUILD_DIR="${CTR_MDB_ROOT_DIR}/build"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Development container image (name:tag)
 # This should be updated whenever we upgrade the development container.
 # (Yet another step on our way to reproducible builds.)
@@ -53,38 +41,8 @@ source "$FC_TOOLS_DIR/functions"
 # Full path to the Firecracker sources dir on the host.
 FC_ROOT_DIR=$(cd "${FC_TOOLS_DIR}/.." && pwd)
 
-# Full path to the build dir on the host.
-FC_BUILD_DIR="${FC_ROOT_DIR}/build"
-
 # Full path to devctr dir on the host.
 FC_DEVCTR_DIR="${FC_ROOT_DIR}/tools/devctr"
-
-# Path to the linux kernel directory on the host.
-KERNEL_DIR="${FC_ROOT_DIR}/.kernel"
-
-# Full path to the cargo registry dir on the host. This appears on the host
-# because we want to persist the cargo registry across container invocations.
-# Otherwise, any rust crates from crates.io would be downloaded again each time
-# we build or test.
-CARGO_REGISTRY_DIR="${FC_BUILD_DIR}/cargo_registry"
-
-# Full path to the cargo git registry on the host. This serves the same purpose
-# as CARGO_REGISTRY_DIR, for crates downloaded from GitHub repos instead of
-# crates.io.
-CARGO_GIT_REGISTRY_DIR="${FC_BUILD_DIR}/cargo_git_registry"
-
-# Full path to the cargo target dir on the host.
-CARGO_TARGET_DIR="${FC_BUILD_DIR}/cargo_target"
-
-# Full path to the seccompiler cargo target dir on the host.
-CARGO_SECCOMPILER_TARGET_DIR="${FC_BUILD_DIR}/seccompiler"
-
-# Full path to the rebase-snap cargo target dir on the host.
-CARGO_REBASE_SNAP_TARGET_DIR="${FC_BUILD_DIR}/rebase-snap"
-
-
-
-
 
 # Check if Docker is available and exit if it's not.
 # Upon returning from this call, the caller can be certain Docker is available.
@@ -476,7 +434,6 @@ cmd_shell() {
             --user "$(id -u):$(id -g)" \
             --ulimit nofile=4096:4096 \
             --ulimit memlock=-1:-1 \
-            --device=/dev/kvm:/dev/kvm \
             --workdir "$CTR_MDB_ROOT_DIR" \
             --env PS1="$(whoami)@\h:\w\$ " \
             -- \

@@ -44,6 +44,38 @@ FC_ROOT_DIR=$(cd "${FC_TOOLS_DIR}/.." && pwd)
 # Full path to devctr dir on the host.
 FC_DEVCTR_DIR="${FC_ROOT_DIR}/tools/devctr"
 
+cmd_init_docker() {
+   say "Init docker"
+   say "Updating os"   
+   say "->"
+   apt-get update
+   say ""
+
+   say "Installing docker"
+   say "->"
+   apt-get -y install docker.io
+   say ""
+
+   say "Start the Docker daemon"
+   say "->"
+   systemctl start docker
+   say "" 
+
+   say "Add your user to the docker group"
+   usermod -aG docker $USER
+   say ""
+
+   say "Set Docker started automatically after boot"
+   say "->"
+   systemctl enable docker
+   say ""
+
+   say "Testing your Docker configuration by running a lightweight test container and checking for net connectivity"
+   say "->"
+   docker pull alpine
+   docker run --rm -it alpine ping -c 3 amazon.com   
+}
+
 # Check if Docker is available and exit if it's not.
 # Upon returning from this call, the caller can be certain Docker is available.
 #

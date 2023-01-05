@@ -1,4 +1,4 @@
-use micro_http::{HttpServer, Response, StatusCode};
+use micro_http::{HttpServer, Response, StatusCode, Body, Version};
 
 fn main() {
     println!("Hello, world!");
@@ -18,11 +18,24 @@ fn main() {
         println!("Loop:");
         for request in server.requests().unwrap() {
             println!("Request ____________________________");
+           /* 
             let response = request.process(|request| {
                  // Your code here.
-                Response::new(request.http_version(), StatusCode::NoContent)
+                Response::new(request.http_version(), StatusCode::OK)
             });
+*/
+            let response = request.process(|request| {
+                let mut response = Response::new(Version::Http11, StatusCode::OK);
+                let response_body = b"response body";
+                response.set_body(Body::new(response_body.to_vec()));
+                response
+            });
+
+
+
             server.respond(response);
+            
+            println!("Responded >><<");
         }  
         // Break this example loop.
         // break;

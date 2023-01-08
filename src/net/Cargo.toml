@@ -7,3 +7,4 @@ license = ""
 
 [dependencies]
 tungstenite = "0.18.0"
+micro_http = { path = "../micro-http" }

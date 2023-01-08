@@ -48,7 +48,7 @@ impl HttpRequestProcessor {
 
     fn handle_connection(mut stream: TcpStream) {
         let buf_reader = BufReader::new(&mut stream); 
-
+        
         let headers: Vec<_>  = buf_reader.lines()
             .map(|r| r.unwrap())
             .take_while(|x| !x.is_empty())

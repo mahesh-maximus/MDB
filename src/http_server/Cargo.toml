@@ -6,3 +6,4 @@ edition = "2021"
 license = ""
 
 [dependencies]
+ micro_http = { path = "../micro_http }

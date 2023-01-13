@@ -1,0 +1,8 @@
+[package]
+name = "mdbm"
+version = "1.0.0"
+authors = ["Mahesh"]
+edition = "2021"
+license = ""
+
+[dependencies]

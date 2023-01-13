@@ -1,30 +1,28 @@
+use mdbm::MdbExitCode;
 use std::env::{args, Args};
 use std::thread;
 use std::time::Duration;
 
-use net::ws_request_processor::WebSocketRequestProcessor;
-use net::http_request_processor::HttpRequestProcessor;
+mod http_server_adapter;
+
+fn main_exitable() -> MdbExitCode {
+    http_server_adapter::run_http_server("main.py".to_string());
+    MdbExitCode::Ok
+}
 
 fn main() {
+    println!("Starting MDB ...");
     unsafe {
         // Harmless print to standard output.
-        libc::syscall(libc::SYS_write, libc::STDOUT_FILENO, "Hello, world!\n", 14);
+        libc::syscall(
+            libc::SYS_write,
+            libc::STDOUT_FILENO,
+            "Hello, world from Sys Call!\n",
+            14,
+        );
     }
 
-    println!("Starting MDB ...");
-
-    let mut args: Args = args();
-    let first = args.nth(0);
-
-    println!("{:?}", first);
-   
-    let mut http_request_processor = HttpRequestProcessor::new("0.0.0.0:3000".to_string());
-    http_request_processor.print_address();
-    http_request_processor.process_http_requests();
-    
-    let mut ws_request_processor = WebSocketRequestProcessor::new("0.0.0.0:8000".to_string());
-    ws_request_processor.process_ws_requests();
-    ws_request_processor.print_address();
+    main_exitable();
 
     println!("Started MDB");
 

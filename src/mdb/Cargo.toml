@@ -1,6 +1,6 @@
 [package]
 name = "mdb"
-version = "0.1.0"
+version = "1.1.0"
 authors = ["Mahesh"]
 edition = "2021"
 build = "../../build.rs"
@@ -10,8 +10,9 @@ license = "MIT License"
 
 [dependencies]
 libc = "0.2.139"
+signal-hook = "0.3.14"
 
 net = { path = "../net" }
-mdbm = { path = "../mdbm" }#
-# http_server = { path = "../http_server" }
+mdbm = { path = "../mdbm" }
+http_server = {path = "../http_server"}
 

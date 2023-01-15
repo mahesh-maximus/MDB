@@ -46,7 +46,7 @@ def proxy_server( conn, addr, data):
     try:
         print("proxy_server")
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect("/tmp/example.sock")
+        sock.connect("/tmp/mdb.socket")
         sock.send(data)
 
         while 1:

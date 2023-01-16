@@ -14,5 +14,5 @@ signal-hook = "0.3.14"
 
 net = { path = "../net" }
 mdbm = { path = "../mdbm" }
-http_server = {path = "../http_server"}
+web_server = {path = "../web_server"}
 

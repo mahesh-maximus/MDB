@@ -1,5 +1,5 @@
 [package]
-name = "http_server"
+name = "web_server"
 version = "0.1.0"
 authors = ["Mahesh"]
 edition = "2021"

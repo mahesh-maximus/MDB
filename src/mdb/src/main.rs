@@ -19,21 +19,19 @@ fn main_exitable() -> MdbExitCode {
         println!("MDB {}", info);
     }));
 
-    http_server_adapter::run_http_server("main.py".to_string());
+    http_server_adapter::run_web_server("main.py".to_string());
 
-    let term = Arc::new(AtomicBool::new(false));
-    signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term));
-    while !term.load(Ordering::Relaxed) {
-        println!("Main Thread is waiting ...");
-        thread::sleep(Duration::from_secs(1));
-    }
+    // let term = Arc::new(AtomicBool::new(false));
+    // signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term));
+    // while !term.load(Ordering::Relaxed) {
 
+    // } 
 
 
-
-    println!("Stopping MDB");
-
-
+    // for x in 1..100 {
+    //     println!("Main Thread is waiting ... till 100, now {}", x.to_string());
+    //     thread::sleep(Duration::from_secs(2));
+    // }
 
     MdbExitCode::Ok
 }

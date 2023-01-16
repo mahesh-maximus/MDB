@@ -2,11 +2,11 @@ use std::path::PathBuf;
 
 
 
-pub struct HttpServer {
+pub struct WebServer {
     temp: String,
 }
 
-impl HttpServer {
+impl WebServer {
     pub fn new(temp: String) -> Self {
         Self {
             temp,

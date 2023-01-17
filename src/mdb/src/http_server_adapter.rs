@@ -1,10 +1,11 @@
+use logger::{info, warn};
+use mdbm::MdbExitCode;
 use std::thread;
 use std::{
     io,
     path::PathBuf,
     process::{Child, Command, Stdio},
 };
-use mdbm::MdbExitCode;
 use web_server::WebServer;
 
 pub fn run_web_server(tcp_proxy_path: String) -> MdbExitCode {
@@ -13,16 +14,16 @@ pub fn run_web_server(tcp_proxy_path: String) -> MdbExitCode {
     let exit_thread = thread::Builder::new()
         .name("mm_http_server".to_owned())
         .spawn(move || {
-            println!(">>>>>>>>>> PRESS ANY KEY TO EXIT >>>>>>>>>>");
+            warn!("press ANY key to exit.");
             let mut user_input = String::new();
             let stdin = io::stdin();
             stdin.read_line(&mut user_input).unwrap();
-            println!("Console input received to exit: {} ", user_input);
-            println!("Killing TCP Proxy");
+            info!("Console input received to exit: {} ", user_input);
+            info!("Killing TCP Proxy");
             tcp_proxy_child_process
                 .kill()
                 .expect("Failed to kill TCP Proxy");
-            println!("Exiting MDB ...");
+            info!("Exiting MDB ...");
             std::process::exit(mdbm::MdbExitCode::GenericError as i32);
         })
         .expect("Web Server thread spawn failed.");

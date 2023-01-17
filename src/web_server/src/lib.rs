@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-
+use logger::info;
 
 
 pub struct WebServer {
@@ -18,7 +18,7 @@ impl WebServer {
         path: &PathBuf
     ) {
         println!("{}", self.temp.to_string());
-        println!("Unix socket path: {}", path.display());
+        info!("Unix socket path: {}", path.display());
 
 
     }

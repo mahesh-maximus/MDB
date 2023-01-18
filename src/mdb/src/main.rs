@@ -1,16 +1,9 @@
-use logger::{error, info, LOGGER};
 use mdbm::MdbExitCode;
-use std::ops::Deref;
 use std::panic;
 
 mod http_server_adapter;
 
 fn main_exitable() -> MdbExitCode {
-    if let Err(err) = LOGGER.deref().configure(Some("MDB->".to_string())) {
-        println!("Could not configure the log subsystem: {}", err);
-        return MdbExitCode::GenericError;
-    }
-
     // Start firecracker by setting up a panic hook, which will be called before
     // terminating as we're building with panic = "abort".
     // It's worth noting that the abort is caused by sending a SIG_ABORT signal to the process.
@@ -18,7 +11,7 @@ fn main_exitable() -> MdbExitCode {
         // We're currently using the closure parameter, which is a &PanicInfo, for printing the
         // origin of the panic, including the payload passed to panic! and the source code location
         // from which the panic originated.
-        error!("MDB {}", info);
+        println!("MDB {}", info);
     }));
 
     http_server_adapter::run_web_server("main.py".to_string());

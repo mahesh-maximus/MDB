@@ -1,5 +1,8 @@
+mod parsed_request;
+mod request;
 use micro_http::{Body, HttpServer, Request, Response, StatusCode, Version};
 use std::path::PathBuf;
+use crate::parsed_request::ParsedRequest;
 
 pub struct WebServer {
     temp: String,
@@ -44,9 +47,6 @@ impl WebServer {
     }
 
     pub fn handle_request(&mut self, request: &Request) -> Response {
-        let mut response = Response::new(Version::Http11, StatusCode::OK);
-        let response_body = b"response body";
-        response.set_body(Body::new(response_body.to_vec()));
-        response
+        ParsedRequest::try_from_request(request)
     }
 }

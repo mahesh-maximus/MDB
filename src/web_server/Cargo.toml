@@ -8,3 +8,4 @@ license = ""
 [dependencies]
 micro_http = { path = "../micro-http" }
 logger = {path = "../logger"}
+utils = {path = "../utils"}

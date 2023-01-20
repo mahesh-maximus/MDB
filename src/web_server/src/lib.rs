@@ -1,5 +1,5 @@
+use micro_http::{Body, HttpServer, Request, Response, StatusCode, Version};
 use std::path::PathBuf;
-use micro_http::{HttpServer, Response, StatusCode, Body, Version};
 
 pub struct WebServer {
     temp: String,
@@ -20,17 +20,33 @@ impl WebServer {
         server.start_server().unwrap();
         println!("Started micro http server");
         loop {
-            for request in server.requests().unwrap() {
-                println!("Request received");
-                let response = request.process(|request| {
-                    let mut response = Response::new(Version::Http11, StatusCode::OK);
-                    let response_body = b"response body";
-                    response.set_body(Body::new(response_body.to_vec()));
-                    response
-                });
-                server.respond(response);
-                println!("Sent response to client");
+            let request_vec = match server.requests() {
+                Ok(vec) => vec,
+                Err(err) => {
+                    // print request error, but keep server running
+                    println!("API Server error on retrieving incoming request: {}", err);
+                    continue;
+                }
+            };
+            for server_request in request_vec {
+                let request_processing_start_us =
+                    utils::time::get_time_us(utils::time::ClockType::Monotonic);
+                server.respond(
+                    // Use `self.handle_request()` as the processing callback.
+                    server_request.process(|request| self.handle_request(request)),
+                );
+
+                let delta_us = utils::time::get_time_us(utils::time::ClockType::Monotonic)
+                    - request_processing_start_us;
+                println!("Total previous API call duration: {} us.", delta_us);
             }
         }
+    }
+
+    pub fn handle_request(&mut self, request: &Request) -> Response {
+        let mut response = Response::new(Version::Http11, StatusCode::OK);
+        let response_body = b"response body";
+        response.set_body(Body::new(response_body.to_vec()));
+        response
     }
 }

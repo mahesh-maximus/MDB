@@ -1,5 +1,6 @@
 use mdbm::MdbExitCode;
 use std::panic;
+use std::env;
 
 mod http_server_adapter;
 
@@ -21,6 +22,8 @@ fn main_exitable() -> MdbExitCode {
 
 fn main() {
     println!("Starting MDB ...");
+    println!("Current Dir: {}", env::current_dir().unwrap().display());
+
     unsafe {
         // Harmless print to standard output.
         libc::syscall(

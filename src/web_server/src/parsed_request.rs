@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use crate::request::index::parse_get_index;
-use micro_http::{Body, Method, Request, Response, StatusCode, Version};
+use micro_http::{Body, Method, Request, Response, StatusCode, Version, Headers};
 
 pub(crate) struct ParsedRequest {}
 
@@ -27,10 +29,12 @@ impl ParsedRequest {
             path_tokens[0]
         };
 
-        match (request.method(), path, request.body.as_ref()) {
-            (Method::Get, "", None) => parse_get_index(),
+        print_headers(&request.headers);
 
-            (method, unknown_uri, _) => {
+        match (request.method(), path, request.body.as_ref(), is_authenticated(request.headers.custom_entries())) {
+            (Method::Get, "", None, true) => parse_get_index(request),
+
+            (method, unknown_uri, _, _) => {
                 println!(
                     "InvalidPathMethod URI: {}, METHOD {}",
                     unknown_uri.to_string(),
@@ -44,6 +48,20 @@ impl ParsedRequest {
 
             }
         }
+    }
+}
+
+fn is_authenticated(headers: &HashMap<String, String>) -> bool {
+
+    //headers.
+
+    true
+}
+
+fn print_headers(headers: &Headers) {
+    
+    for (key, val) in headers.custom_entries().iter() {
+        println!("Header custom -> key: {key} val: {val}");
     }
 }
 

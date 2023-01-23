@@ -2,5 +2,10 @@
 
 rm -fr /usr/local/rust/registry
 
-tmux
+# Commented due to scrolling issue.
+# tmux
+
+clear
+fish
+
 exec "$@"

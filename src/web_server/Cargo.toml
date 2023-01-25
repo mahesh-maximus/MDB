@@ -1,0 +1,11 @@
+[package]
+name = "web_server"
+version = "0.1.0"
+authors = ["Mahesh"]
+edition = "2021"
+license = ""
+
+[dependencies]
+micro_http = { path = "../micro-http" }
+logger = {path = "../logger"}
+utils = {path = "../utils"}

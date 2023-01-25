@@ -1,36 +1,40 @@
-use std::env::{args, Args};
-use std::thread;
-use std::time::Duration;
+use mdbm::MdbExitCode;
+use std::panic;
+use std::env;
 
-use net::ws_request_processor::WebSocketRequestProcessor;
-use net::http_request_processor::HttpRequestProcessor;
+mod http_server_adapter;
+
+fn main_exitable() -> MdbExitCode {
+    // Start firecracker by setting up a panic hook, which will be called before
+    // terminating as we're building with panic = "abort".
+    // It's worth noting that the abort is caused by sending a SIG_ABORT signal to the process.
+    panic::set_hook(Box::new(move |info| {
+        // We're currently using the closure parameter, which is a &PanicInfo, for printing the
+        // origin of the panic, including the payload passed to panic! and the source code location
+        // from which the panic originated.
+        println!("MDB {}", info);
+    }));
+
+    http_server_adapter::run_web_server("main.py".to_string());
+
+    MdbExitCode::Ok
+}
 
 fn main() {
+    println!("Starting MDB ...");
+    println!("Current Dir: {}", env::current_dir().unwrap().display());
+
     unsafe {
         // Harmless print to standard output.
-        libc::syscall(libc::SYS_write, libc::STDOUT_FILENO, "Hello, world!\n", 14);
+        libc::syscall(
+            libc::SYS_write,
+            libc::STDOUT_FILENO,
+            "Hello, world from Sys Call!\n",
+            14,
+        );
     }
 
-    println!("Starting MDB ...");
+    let exit_code = main_exitable();
 
-    let mut args: Args = args();
-    let first = args.nth(0);
-
-    println!("{:?}", first);
-   
-    let mut http_request_processor = HttpRequestProcessor::new("0.0.0.0:3000".to_string());
-    http_request_processor.print_address();
-    http_request_processor.process_http_requests();
-    
-    let mut ws_request_processor = WebSocketRequestProcessor::new("0.0.0.0:8000".to_string());
-    ws_request_processor.process_ws_requests();
-    ws_request_processor.print_address();
-
-    println!("Started MDB");
-
-    // Hold on to dear life, don't let the main method exit.
-    loop {
-        println!("Main Thread is waiting ...");
-        thread::sleep(Duration::from_secs(5));
-    }
+    std::process::exit(exit_code as i32);
 }

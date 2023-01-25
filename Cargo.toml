@@ -1,3 +1,4 @@
 [workspace]
 members = ["src/mdb"]
 default-members = ["src/mdb"]
+exclude = ["test/any"]

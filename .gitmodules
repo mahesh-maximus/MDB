@@ -1,0 +1,3 @@
+[submodule "src/micro-http"]
+	path = src/micro-http
+	url = https://github.com/mahesh-maximus/micro-http.git

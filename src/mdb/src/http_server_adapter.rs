@@ -1,5 +1,5 @@
 use mdbm::MdbExitCode;
-use std::thread;
+use std::{thread};
 use std::{
     io,
     path::PathBuf,

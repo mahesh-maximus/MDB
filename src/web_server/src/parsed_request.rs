@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use crate::request::index::parse_get_index;
-use micro_http::{Body, Method, Request, Response, StatusCode, Version, Headers};
+use crate::request::{index::parse_get_index, signin::parse_signin, auth::parse_get_auth, not_found::parse_not_found};
+use micro_http::{Body, Method, Request, Response, StatusCode, Version, Headers, MediaType};
 
 pub(crate) struct ParsedRequest {}
 
@@ -31,35 +31,52 @@ impl ParsedRequest {
 
         print_headers(&request.headers);
 
-        match (request.method(), path, request.body.as_ref(), is_authenticated(request.headers.custom_entries())) {
-            (Method::Get, "", None, true) => parse_get_index(request),
-
-            (method, unknown_uri, _, _) => {
+        println!("Request ACCEPT header: {}", request.headers.accept().as_str());
+        println!("Request Content_Type header: {}", request.headers.content_type().as_str());
+        
+        match (request.method(), path, request.headers.content_type(), request.body.as_ref(), is_authenticated(request.headers.custom_entries())) {
+            (Method::Get, "", _, None, true) => parse_get_index(request),
+            (Method::Post, "auth", MediaType::ApplicationJson, Some(body), false) => parse_get_auth(body),
+            (Method::Get, "favicon.ico", _, None, _) => parse_get_favicon(),
+            (_, _,_ , _, false) => parse_signin(request),
+            (method, unknown_uri,MediaType::TextHtml, _, _) => {
                 println!(
-                    "InvalidPathMethod URI: {}, METHOD {}",
+                    "ParsedRequest.try_from_request InvalidPathMethod URI: {}, METHOD {}",
                     unknown_uri.to_string(),
                     method.to_str()
                 );
 
-                let mut response = Response::new(Version::Http11, StatusCode::OK);
-                let response_body = b"InvalidPathMethod response body";
-                response.set_body(Body::new(response_body.to_vec()));
-                return response;
+                parse_not_found(request)
+            },
+            (_, _, _, _, _) => {
+                println!("ParsedRequest.try_from_request URI cannot parse");
+                let mut response = Response::new(Version::Http11, StatusCode::NotFound);
+                response.set_content_type(MediaType::ApplicationJson);
 
+                response
             }
         }
     }
 }
 
 fn is_authenticated(headers: &HashMap<String, String>) -> bool {
+    println!("parsed_request.is_authenticated fn");
+    if headers.contains_key("Cookie") {
+        println!("parsed_request.is_authenticated auth key is available fn");
+        return true
+    }
 
-    //headers.
+    println!("parsed_request.is_authenticated auth key not found fn");
+    false
+}
 
-    true
+fn parse_get_favicon() -> Response {
+    println!("parsed_request.parse_get_favicon fn");
+    let response = Response::new(Version::Http11, StatusCode::NotFound);
+    return response;
 }
 
 fn print_headers(headers: &Headers) {
-    
     for (key, val) in headers.custom_entries().iter() {
         println!("Header custom -> key: {key} val: {val}");
     }

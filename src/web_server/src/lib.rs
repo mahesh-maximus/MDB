@@ -1,6 +1,6 @@
 mod parsed_request;
 mod request;
-use micro_http::{Body, HttpServer, Request, Response, StatusCode, Version};
+use micro_http::{HttpServer, Request, Response};
 use std::path::PathBuf;
 use crate::parsed_request::ParsedRequest;
 
@@ -50,3 +50,4 @@ impl WebServer {
         ParsedRequest::try_from_request(request)
     }
 }
+ 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Login to MDB</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1, width=device-width" />
+	<script src="https://unpkg.com/react@latest/umd/react.development.js" crossorigin="anonymous"> </script>
+	<script src="https://unpkg.com/react-dom@latest/umd/react-dom.development.js"> </script>
+	<script src="https://unpkg.com/@mui/material@latest/umd/material-ui.development.js"
+		crossorigin="anonymous"> </script>
+	<script src="https://unpkg.com/babel-standalone@latest/babel.min.js" crossorigin="anonymous"> </script>
+
+	<!-- Fonts to support Material Design -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+	<!-- Icons to support Material Design -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+</head>
+
+<body>
+	<script>
+		// alert("Login");
+	</script>
+
+	<div id="root"></div>
+
+	<script type="text/babel">
+		const {
+			colors,
+			CssBaseline,
+			ThemeProvider,
+			Typography,
+			Container,
+			createTheme,
+			Box,
+			SvgIcon,
+			Link,
+			Button,
+			Stack,
+			TextField
+		} = MaterialUI;
+
+		// Create a theme instance.
+		const theme = createTheme({
+			palette: {
+				primary: {
+					main: '#556cd6',
+				},
+				secondary: {
+					main: '#19857b',
+				},
+				error: {
+					main: colors.red.A400,
+				},
+			},
+		});
+
+		function App() {
+			const handleSubmit = (event) => {
+				event.preventDefault();
+				const data = new FormData(event.currentTarget);
+				// alert(data.get('username'));
+
+				postData('http://40.88.126.144:3000/auth', { username: data.get('username'), password: data.get('password') })
+					.then((data) => {
+						console.log(data); // JSON data parsed by `data.json()` call
+						window.location.replace("http://40.88.126.144:3000");
+					});
+
+			};
+
+
+			// Example POST method implementation:
+			async function postData(url = '', data = {}) {
+				// Default options are marked with *
+				const response = await fetch(url, {
+					method: 'POST', // *GET, POST, PUT, DELETE, etc.
+					mode: 'cors', // no-cors, *cors, same-origin
+					cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+					credentials: 'same-origin', // include, *same-origin, omit
+					headers: {
+						'Content-Type': 'application/json',
+						// 'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					redirect: 'follow', // manual, *follow, error
+					referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+					body: JSON.stringify(data) // body data type must match "Content-Type" header
+				});
+				return response.json(); // parses JSON response into native JavaScript objects
+			};
+
+
+			return (
+				<Container maxWidth="sm">
+					<Box component="form" noValidate onSubmit={handleSubmit} sx={{ my: 4 }}>
+						<Stack spacing={2}>
+							<Stack spacing={2}>
+								<TextField
+									id="username"
+									name="username"
+									label="User Name"
+									type="search" />
+								<TextField
+									id="password"
+									label="password"
+									type="password"
+									autoComplete="current-password" />
+							</Stack>
+							<Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+								<Button variant="contained" color="error">
+									Reset
+								</Button>
+								<Button variant="contained" color="success" type="submit">
+									Login
+								</Button>
+							</Stack>
+						</Stack>
+					</Box>
+				</Container>
+			);
+		}
+
+		const root = ReactDOM.createRoot(document.getElementById('root'));
+		root.render(
+			<ThemeProvider theme={theme}>
+				{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+				<CssBaseline />
+				<App />
+			</ThemeProvider>,
+		);
+	</script>
+</body>
+
+</html>

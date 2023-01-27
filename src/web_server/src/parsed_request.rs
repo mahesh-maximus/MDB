@@ -48,7 +48,7 @@ impl ParsedRequest {
 
                 parse_not_found(request)
             },
-            (_, _, _, _, _) => {
+            _ => {
                 println!("ParsedRequest.try_from_request URI cannot parse");
                 let mut response = Response::new(Version::Http11, StatusCode::NotFound);
                 response.set_content_type(MediaType::ApplicationJson);

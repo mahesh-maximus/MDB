@@ -10,37 +10,37 @@ PORT = 3000
 def start():
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((HOST, PORT))
         sock.listen(1)
 
         printc('1','44', '1', "HTTP Proxy-> TCP Socket started successfully.")
-    except Exception:
-        printc('1','44', '1', "HTTP Proxy-> Unable to Initialize Socket.")
-        printc('1','44', '1', Exception)
+    except Exception as e:
+        printc('1','37', '41', "HTTP Proxy-> Unable to Initialize Socket.")
+        printc('1','37', '41', 'HTTP Proxy-> start.Exception:{}.'.format(e))
         sys.exit(2)
 
     while True:
         try:
-            printc('1','44', '1', "HTTP Proxy-> Waiting to accept client requests. >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-            conn, addr = sock.accept() #Accept connection from client browser
-            printc('1','44', '1', 'HTTP Proxy-> Client request accepted from: {}.'.format(addr))
-            data = conn.recv(buffer_size) #Recieve client data
+            printc('5','30', '43', "HTTP Proxy-> Waiting to accept client requests.")
+            conn, addr = sock.accept()
+            printc('6','30', '42', 'HTTP Proxy-> Client request accepted from: {}.'.format(addr))
+            data = conn.recv(buffer_size) 
             printc('1','44', '1', 'HTTP Proxy-> Received request {}.'.format(data))
             conn_string(conn, data)
-            # start_new_thread(conn_string, (conn,data)) #Starting a thread
         except KeyboardInterrupt:
             sock.close()
-            printc('1','44', '1', "HTTP Proxy-> Graceful Shutdown.")
+            printc('1','37', '41', "HTTP Proxy-> Graceful Shutdown.")
             sys.exit(1) 
-        except Exception:
-            printc('1','44', '1', 'HTTP Proxy-> start.Exception:{}.'.format(Exception))
+        except Exception as e:
+            printc('1','37', '41', 'HTTP Proxy-> start.Exception:{}.'.format(e))
             pass
 
 def conn_string(conn, data):
     try:
         proxy_server(conn, data)
-    except Exception:
-        printc('1','44', '1', 'HTTP Proxy-> conn_string.Exception:{}.'.format(Exception))
+    except Exception as e:
+        printc('1','37', '41', 'HTTP Proxy-> conn_string.Exception:{}.'.format(e))
         pass
 
 def proxy_server( conn, data):
@@ -60,22 +60,20 @@ def proxy_server( conn, data):
             printc('1','44', '1', 'HTTP Proxy-> Rreceived data from Unix socket.')
             if(len(reply) > 0):
                 conn.send(reply)
-                printc('1','44', '1', "HTTP Proxy-> Sent data received from Unix socket to client")
+                printc('6','30', '46', "HTTP Proxy-> Sent data to client from Unix socket to client")
             else:
                 printc('1','44', '1', "HTTP Proxy-> Completed sending data.")
                 break
         sock.close()
         conn.close()
-    except socket.timeout:
-        printc('1','44', '1', 'HTTP Proxy-> proxy_server.timeout:{}.'.format(socket.timeout))
-        #sock.close()
+    except socket.timeout as e:
+        printc('6','37', '41', 'HTTP Proxy-> proxy_server.timeout:{}.'.format(e))
         conn.close()
         pass
-    except socket.error:
-        printc('1','44', '1', 'HTTP Proxy-> proxy_server.error:{}.'.format(socket.error))
+    except socket.error as e:
+        printc('1','37', '41', 'HTTP Proxy-> proxy_server.error:{}.'.format(e))
         sock.close()
         conn.close()
-        printc('1','44', '1', sock.error)
         sys.exit(1)
 
 def printc(style, fg, bg, msg):

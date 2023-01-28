@@ -1,9 +1,9 @@
-use std::process::Command;
+macro_rules! p {
+    ($($tokens: tt)*) => {
+        println!("cargo:warning={}", format!($($tokens)*))
+    }
+}
 
 fn main() {
-    Command::new("clear")
-        .output()
-        .expect("failed to execute 'clear' process");
-
-    println!("__________ buil.rs__________");
+    p!("BUILD.rs -> Test print");
 }

@@ -2,7 +2,10 @@ mod parsed_request;
 mod request;
 use micro_http::{HttpServer, Request, Response};
 use std::path::PathBuf;
+
 use crate::parsed_request::ParsedRequest;
+
+pub mod common;
 
 pub struct WebServer {
     temp: String,

@@ -16,6 +16,8 @@
 
 	<!-- Icons to support Material Design -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+	<script src="common.js"></script>
 </head>
 
 <body>
@@ -62,10 +64,10 @@
 				const data = new FormData(event.currentTarget);
 				// alert(data.get('username'));
 
-				postData('http://40.88.126.144:3000/auth', { username: data.get('username'), password: data.get('password') })
+				postData(getBaseUri() + '/auth', { username: data.get('username'), password: data.get('password') })
 					.then((data) => {
 						console.log(data); // JSON data parsed by `data.json()` call
-						window.location.replace("http://40.88.126.144:3000");
+						window.location.replace(getBaseUri());
 					});
 
 			};

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::request::{index::parse_get_index, signin::parse_signin, auth::parse_get_auth, not_found::parse_not_found};
+use crate::request::{index::parse_get_index, signin::parse_signin, auth::parse_get_auth, not_found::parse_not_found, common_js::parse_common_js};
 use micro_http::{Body, Method, Request, Response, StatusCode, Version, Headers, MediaType};
 
 pub(crate) struct ParsedRequest {}
@@ -37,6 +37,7 @@ impl ParsedRequest {
         match (request.method(), path, request.headers.content_type(), request.body.as_ref(), is_authenticated(request.headers.custom_entries())) {
             (Method::Get, "", _, None, true) => parse_get_index(request),
             (Method::Post, "auth", MediaType::ApplicationJson, Some(body), false) => parse_get_auth(body),
+            (Method::Get, "common.js", MediaType::PlainText, None, _) => parse_common_js(),
             (Method::Get, "favicon.ico", _, None, _) => parse_get_favicon(),
             (_, _,_ , _, false) => parse_signin(request),
             (method, unknown_uri,MediaType::TextHtml, _, _) => {

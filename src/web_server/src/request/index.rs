@@ -1,5 +1,3 @@
-
-use std::fs;
 use micro_http::MediaType;
 use crate::request::{Body, StatusCode, Response, Version, Request};
 use crate::common::get_content;

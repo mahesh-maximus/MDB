@@ -1,0 +1,11 @@
+[package]
+name = "ws-server"
+version = "0.1.0"
+authors = ["Mahesh"]
+edition = "2021"
+license = ""
+
+[dependencies]
+utils = {path = "../utils"}
+tungstenite = "0.18.0"
+lazy_static = "1.4.0"

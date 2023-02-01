@@ -9,3 +9,7 @@ license = ""
 utils = {path = "../utils"}
 tungstenite = "0.18.0"
 lazy_static = "1.4.0"
+
+[dev-dependencies]
+url = "2.3.1"
+

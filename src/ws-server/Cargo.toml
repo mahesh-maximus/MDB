@@ -1,5 +1,5 @@
 [package]
-name = "ws-server"
+name = "ws_server"
 version = "0.1.0"
 authors = ["Mahesh"]
 edition = "2021"
@@ -9,6 +9,8 @@ license = ""
 utils = {path = "../utils"}
 tungstenite = "0.18.0"
 lazy_static = "1.4.0"
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.91"
 
 [dev-dependencies]
 url = "2.3.1"

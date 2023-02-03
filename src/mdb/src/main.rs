@@ -41,3 +41,11 @@ fn main() {
 
     std::process::exit(exit_code as i32);
 }
+
+#[cfg(test)]
+mod main_tests {
+    #[test]
+    fn test_main() {
+        assert!(true);
+    }
+}

@@ -62,7 +62,7 @@ impl WebSocketServer {
 struct WebSocketServerInner {}
 
 impl WebSocketServerInner {
-    pub fn new() -> Self {
+    fn new() -> Self {
         println!("WebSocketServer.new fn .");
         WebSocketServerInner {}
     }
@@ -184,15 +184,15 @@ mod tests {
         assert!(!msg.is_empty());
         println!("Received message from server: {}", msg);
 
-        // socket
-        //     .write_message(Message::Text("PING".to_string()))
-        //     .unwrap();
-        // thread::sleep(time::Duration::from_secs(1));
-        // println!(
-        //     "Read queue length: {}",
-        //     web_socket.get_read_queue_len().to_string()
-        // );
-        // assert_eq!(web_socket.get_read_queue_len(), 1);
+        socket
+            .write_message(Message::Text("PING".to_string()))
+            .unwrap();
+        thread::sleep(time::Duration::from_secs(1));
+        println!(
+            "Read queue length: {}",
+            web_socket.get_read_queue_len().to_string()
+        );
+        assert_eq!(web_socket.get_read_queue_len(), 1);
 
         thread::sleep(time::Duration::from_secs(60));
     }

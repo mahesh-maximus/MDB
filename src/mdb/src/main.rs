@@ -1,3 +1,5 @@
+
+use live_reload::LiveReload;
 use mdbm::MdbExitCode;
 use std::panic;
 use std::env;
@@ -15,6 +17,10 @@ fn main_executable() -> MdbExitCode {
         // from which the panic originated.
         println!("MDB {}", info);
     }));
+
+    //start_to_watch("/mdb/frontend".to_string());
+    let mut live_reload = LiveReload::new("/mdb/frontend".to_string());
+    live_reload.start_to_watch();
 
     ws_server_adapter::run_ws_server();
     http_server_adapter::run_web_server("main.py".to_string());

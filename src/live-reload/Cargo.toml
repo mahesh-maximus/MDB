@@ -1,0 +1,12 @@
+[package]
+name = "live_reload"
+version = "1.0.0"
+authors = ["Mahesh"]
+edition = "2021"
+license = ""
+
+[dependencies]
+lazy_static = "1.4.0"
+utils = {path = "../utils"}
+notify = "5.1.0"
+notify-debouncer-mini = { version = "0.2.0" }

@@ -13,35 +13,42 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
   <!-- Icons to support Material Design -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+  <script src="js/app-main.js"></script>
+  <script src="js/web-socket.js"></script>
+
 </head>
 
 <body>
 
   <script>
+
+    startUp()
+
     //alert("MAX 1");
-    const socket = new WebSocket('ws://40.88.126.144:8000');
+    // const socket = new WebSocket('ws://40.88.126.144:8000');
 
 
 
-    // Connection opened
-    socket.addEventListener('open', (event) => {
-      alert("WS open con");
-      socket.send('Hello Server!');
+    // // Connection opened
+    // socket.addEventListener('open', (event) => {
+    //   alert("WS open con");
+    //   socket.send('Hello Server!');
 
-      setTimeout(() => {
-        socket.send('Hello Server XXXXXXXXXXXXXXXXXXXXXXX !');
+    //   setTimeout(() => {
+    //     socket.send('Hello Server XXXXXXXXXXXXXXXXXXXXXXX !');
 
-        console.log("Delayed for 10 second.");
-      }, "10000")
+    //     console.log("Delayed for 10 second.");
+    //   }, "10000")
 
 
-    });
+    // });
 
-    // Listen for messages
-    socket.addEventListener('message', (event) => {
-      alert(event.data);
-      console.log('Message from server ', event.data);
-    });
+    // // Listen for messages
+    // socket.addEventListener('message', (event) => {
+    //   alert(event.data);
+    //   console.log('Message from server ', event.data);
+    // });
 
   </script>
 

@@ -21,7 +21,7 @@ impl LiveReload {
 
         thread::spawn(move || {
             let (tx, rx) = mpsc::channel();
-            let mut debouncer = new_debouncer(Duration::from_secs(5), None, tx).unwrap();
+            let mut debouncer = new_debouncer(Duration::from_secs(1), None, tx).unwrap();
             debouncer
                 .watcher()
                 .watch(

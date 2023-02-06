@@ -106,7 +106,7 @@ impl WebSocketServerInner {
                         println!("WebSocketServer.bind_and_run, message sent to client.");
                     }
 
-                    println!("WebSocketServer.bind_and_run, try to read ping from client.");
+                    println!("WebSocketServer.bind_and_run, try to read ping from client {}/5.", retry_count.to_string()) ;
                     let message_from_client_result = websocket.read_message();
                     if message_from_client_result.is_err() {
                         println!(
@@ -114,9 +114,8 @@ impl WebSocketServerInner {
                             message_from_client_result.err().unwrap().to_string()
                         );
                         if retry_count >= 4 {
-                            println!("WebSocketServer.bind_and_run, message read attempt count exhausted !!!.");
+                            println!("WebSocketServer.bind_and_run, message read 5/5 attempts exhausted !!!.");
                             break;
-
                         }
                         retry_count = retry_count + 1;
                         continue;
@@ -127,6 +126,8 @@ impl WebSocketServerInner {
                         .lock()
                         .unwrap()
                         .push_back(message_from_client_result.unwrap().to_string());
+
+                    println!("WebSocketServer.bind_and_run, received PING from client.");
                 }
                 println!("WebSocketServer.bind_and_run, since message read attempt count exhausted, waiting for a new incoming client request.");
             }

@@ -31,8 +31,8 @@ pub enum WebSocketMessageType {
 
 #[derive(Serialize, Deserialize)]
 pub struct WebSocketMessage {
-    message_type: WebSocketMessageType,
-    body: String,
+    pub message_type: WebSocketMessageType,
+    pub body: String,
 }
 
 pub struct WebSocketServer {}

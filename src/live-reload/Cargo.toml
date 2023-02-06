@@ -6,6 +6,7 @@ edition = "2021"
 license = ""
 
 [dependencies]
+ws_server = {path = "../ws-server"}
 lazy_static = "1.4.0"
 utils = {path = "../utils"}
 notify = "5.1.0"

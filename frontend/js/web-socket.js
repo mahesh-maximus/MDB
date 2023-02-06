@@ -13,6 +13,18 @@ function initWebSocketClient() {
 
     socket.addEventListener('message', (event) => {
         console.log('web-socket, message from server ', event.data);
+
+        const eventObj = JSON.parse(event.data);
+
+        switch(eventObj.message_type) {
+            case "LiveReload":
+              console.log('web-socket, LiveReload')
+              location.reload();
+              break;
+            default:
+              // code block
+          } 
+
     });
 
     setInterval(pingServer, 5000, socket);

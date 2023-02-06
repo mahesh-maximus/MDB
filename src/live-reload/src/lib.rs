@@ -1,5 +1,6 @@
 use notify::RecursiveMode;
 use notify_debouncer_mini::new_debouncer;
+use ws_server::{WebSocketServer, WebSocketMessageType, WebSocketMessage};
 use std::{path::PathBuf, sync::mpsc, thread, time::Duration};
 
 pub struct LiveReload {
@@ -36,6 +37,12 @@ impl LiveReload {
                     break;
                 }
                 println!("LiveReload.watch call WS ...");
+                let mut web_socket = WebSocketServer::new();
+                let web_socket_message = WebSocketMessage {
+                    message_type: WebSocketMessageType::LiveReload,
+                    body: "Reload".to_string(),
+                };
+                web_socket.write_message(web_socket_message);
             }
         });
     }

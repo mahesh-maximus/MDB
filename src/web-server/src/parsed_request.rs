@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::request::{index::parse_get_index, signin::parse_signin, auth::parse_get_auth, not_found::parse_not_found, common_js::parse_common_js};
+use crate::request::{index::parse_get_index, signin::parse_signin, auth::parse_get_auth, not_found::parse_not_found, js::{parse_js}};
 use micro_http::{Body, Method, Request, Response, StatusCode, Version, Headers, MediaType};
 
 pub(crate) struct ParsedRequest {}
@@ -15,34 +15,22 @@ impl ParsedRequest {
             request.body.as_ref(),
         ));
 
-
-        // Split request uri by '/' by doing:
-        // 1. Trim starting '/' characters
-        // 2. Splitting by '/'
-        let path_tokens: Vec<&str> = request_uri
-            .trim_start_matches('/')
-            .split_terminator('/')
-            .collect();
-        let path = if path_tokens.is_empty() {
-            ""
-        } else {
-            path_tokens[0]
-        };
-
         print_headers(&request.headers);
 
         println!("Request ACCEPT header: {}", request.headers.accept().as_str());
         println!("Request Content_Type header: {}", request.headers.content_type().as_str());
         
-        match (request.method(), path, request.headers.content_type(), request.body.as_ref(), is_authenticated(request.headers.custom_entries())) {
-            (Method::Get, "", _, None, true) => parse_get_index(request),
-            (Method::Post, "auth", MediaType::ApplicationJson, Some(body), false) => parse_get_auth(body),
-            (Method::Get, "common.js", MediaType::PlainText, None, _) => parse_common_js(),
-            (Method::Get, "favicon.ico", _, None, _) => parse_get_favicon(),
+        match (request.method(), request_uri.as_str(), request.headers.content_type(), request.body.as_ref(), is_authenticated(request.headers.custom_entries())) {
+            (Method::Get, "/", _, None, true) => parse_get_index(request),
+            (Method::Post, "/auth", MediaType::ApplicationJson, Some(body), false) => parse_get_auth(body),
+            (Method::Get, "/common.js", MediaType::PlainText, None, _) => parse_js("common.js".to_string()),
+            (Method::Get, "/js/app-main.js", MediaType::PlainText, None, _) => parse_js("js/app-main.js".to_string()),
+            (Method::Get, "/js/web-socket.js", MediaType::PlainText, None, _) => parse_js("js/web-socket.js".to_string()),
+            (Method::Get, "/favicon.ico", _, None, _) => parse_get_favicon(),
             (_, _,_ , _, false) => parse_signin(request),
             (method, unknown_uri,MediaType::TextHtml, _, _) => {
                 println!(
-                    "ParsedRequest.try_from_request InvalidPathMethod URI: {}, METHOD {}",
+                    "ParsedRequest.try_from_request InvalidPathMethod !!!!! URI: {}, METHOD {}.",
                     unknown_uri.to_string(),
                     method.to_str()
                 );
@@ -50,7 +38,7 @@ impl ParsedRequest {
                 parse_not_found(request)
             },
             _ => {
-                println!("ParsedRequest.try_from_request URI cannot parse");
+                println!("ParsedRequest.try_from_request URI cannot parse !!!!!.");
                 let mut response = Response::new(Version::Http11, StatusCode::NotFound);
                 response.set_content_type(MediaType::ApplicationJson);
 

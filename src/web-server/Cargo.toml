@@ -7,6 +7,5 @@ license = ""
 
 [dependencies]
 micro_http = { path = "../micro-http" }
-logger = {path = "../logger"}
 utils = {path = "../utils"}
 serde_json = "1.0.91"
